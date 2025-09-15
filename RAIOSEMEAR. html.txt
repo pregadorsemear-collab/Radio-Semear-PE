@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rádio Semear - 24h Gospel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .player-section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .now-playing {
+            margin-bottom: 30px;
+        }
+
+        .album-art {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: spin 20s linear infinite;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .album-art.paused {
+            animation-play-state: paused;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .song-info {
+            margin-bottom: 30px;
+        }
+
+        .song-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .artist {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .play-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            font-size: 1.2rem;
+            padding: 15px 30px;
+        }
+
+        .play-btn.playing {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .mic-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .mic-btn.recording {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            animation: pulse 1s infinite;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .volume-slider {
+            width: 150px;
+            height: 5px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #FFD700;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .playlist-section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .playlist-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #FFD700;
+        }
+
+        .playlist {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .playlist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .playlist-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+
+        .playlist-item.current {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+        }
+
+        .song-details {
+            flex-grow: 1;
+        }
+
+        .song-duration {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #FFD700;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .live-indicator {
+            background: #ff4757;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        .mic-indicator {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+            display: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .contact-info {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #FFD700;
+        }
+
+        .status-bar {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .album-art {
+                width: 150px;
+                height: 150px;
+                font-size: 3rem;
+            }
+            
+            .player-section {
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .playlist-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="logo">📻 RÁDIO SEMEAR</h1>
+            <p class="subtitle">Semeando a Palavra de Deus 24 horas</p>
+            <p class="tagline">"Semeia-se em lágrimas e se ceifa com alegria" - Salmos 126:5</p>
+        </header>
+
+        <div class="status-bar">
+            <span class="live-indicator">🔴 AO VIVO</span>
+            <span class="mic-indicator" id="micIndicator">🎙️ NO AR</span>
+            <span style="margin-left: 20px;">Ouvintes: <strong id="listeners">247</strong></span>
+        </div>
+
+        <section class="player-section">
+            <div class="now-playing">
+                <div class="album-art" id="albumArt">
+                    <i class="fas fa-cross"></i>
+                </div>
+                <div class="song-info">
+                    <div class="song-title" id="songTitle">Quão Grande é o Meu Deus</div>
+                    <div class="artist" id="artist">Hillsong</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="time-info">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">3:45</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn" onclick="previousSong()">
+                    <i class="fas fa-backward"></i> Anterior
+                </button>
+                <button class="control-btn play-btn" onclick="togglePlay()">
+                    <i class="fas fa-play" id="playIcon"></i>
+                    <span id="playText">PLAY</span>
+                </button>
+                <button class="control-btn" onclick="nextSong()">
+                    <i class="fas fa-forward"></i> Próxima
+                </button>
+                <button class="control-btn mic-btn" onclick="toggleMic()">
+                    <i class="fas fa-microphone" id="micIcon"></i>
+                    <span id="micText">FALAR</span>
+                </button>
+            </div>
+
+            <div class="volume-control">
+                <i class="fas fa-volume-down"></i>
+                <input type="range" class="volume-slider" min="0" max="100" value="70" onchange="changeVolume(this.value)">
+                <i class="fas fa-volume-up"></i>
+            </div>
+        </section>
+
+        <section class="playlist-section">
+            <h2 class="playlist-title">🎵 PLAYLIST GOSPEL</h2>
+            <div class="playlist" id="playlist">
+                <!-- Playlist será gerada pelo JavaScript -->
+            </div>
+        </section>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="card-icon">🎵</div>
+                <div class="card-title">Louvores 24h</div>
+                <p>Os melhores hinos e canções gospel tocando ininterruptamente para edificar sua alma e fortalecer sua fé.</p>
+            </div>
+
+            <div class="info-card">
+                <div class="card-icon">🎙️</div>
+                <div class="card-title">Fale na Rádio</div>
+                <p>Clique em "FALAR" para transmitir sua voz ao vivo. Compartilhe testemunhos, orações e palavras de edificação.</p>
+            </div>
+
+            <div class="info-card">
+                <div class="card-icon">📖</div>
+                <div class="card-title">Palavra de Deus</div>
+                <p>Pregações, estudos bíblicos e ensinamentos que transformam vidas e aproximam você do coração do Pai.</p>
+            </div>
+        </div>
+
+        <div class="contact-info">
+            <h3>📞 Entre em Contato</h3>
+            <p>Email: apostolicasemear@hotmail.com</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+                "E esta palavra de Deus crescia e se multiplicava" - Atos 12:24
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let isPlaying = false;
+        let isMicOn = false;
+        let currentVolume = 70;
+        let currentSongIndex = 0;
+        let currentTime = 0;
+        let duration = 225; // 3:45 em segundos
+        let radioAudio = null;
+
+        // CONFIGURAÇÃO RÁDIO GRATUITA
+        const RADIO_CONFIG = {
+            // Stream de exemplo - você substituirá pela sua URL do AzuraCast
+            streamUrl: 'https://demo.azuracast.com/radio/8000/radio.mp3',
+            fallbackStreams: [
+                'https://ice1.somafm.com/groovesalad-256-mp3',
+                'https://streaming.radio.co/s2c6077457/listen'
+            ]
+        };
+
+        // Playlist Gospel Completa
+        const playlist = [
+            { title: "Quão Grande é o Meu Deus", artist: "Hillsong", duration: "3:45" },
+            { title: "Oceanos", artist: "Hillsong United", duration: "4:12" },
+            { title: "Reckless Love", artist: "Cory Asbury", duration: "4:08" },
+            { title: "Como Zaqueu", artist: "Bruna Karla", duration: "3:32" },
+            { title: "Tua Graça me Basta", artist: "Fernandinho", duration: "4:25" },
+            { title: "Bondade de Deus", artist: "Aline Barros", duration: "3:58" },
+            { title: "Way Maker", artist: "Sinach", duration: "4:33" },
+            { title: "Santo", artist: "Fernandinho", duration: "5:12" },
+            { title: "Gratidão", artist: "André e Felipe", duration: "3:41" },
+            { title: "Semeando Amor", artist: "Ministério Apostólica Semear", duration: "4:02" },
+            { title: "Hosana", artist: "Gabriela Rocha", duration: "4:18" },
+            { title: "Deus Cuida de Mim", artist: "Kleber Lucas", duration: "3:55" },
+            { title: "Aleluia", artist: "Gabriela Rocha", duration: "4:44" },
+            { title: "Creio em Ti", artist: "Hillsong em Português", duration: "4:07" },
+            { title: "Eu Navegarei", artist: "Ministério Vineyard", duration: "3:29" },
+            { title: "Pai Nosso", artist: "Aline Barros", duration: "4:15" },
+            { title: "Geração de Jesus", artist: "Adoração e Adoradores", duration: "4:38" },
+            { title: "Agnus Dei", artist: "Michael W. Smith", duration: "4:21" },
+            { title: "Ressuscita-me", artist: "Aline Barros", duration: "3:47" },
+            { title: "Jesus em Tua Presença", artist: "Vineyard", duration: "5:03" },
+            { title: "Maranata", artist: "Música de Adoração", duration: "4:11" },
+            { title: "Shout to the Lord", artist: "Hillsong", duration: "4:26" },
+            { title: "Vem Esta é a Hora", artist: "Vineyard", duration: "4:52" },
+            { title: "Casa do Pai", artist: "Aline Barros", duration: "3:36" },
+            { title: "Rei dos Reis", artist: "Ministério Sarando a Terra Ferida", duration: "4:19" }
+        ];
+
+        // INICIALIZAR RÁDIO ONLINE GRATUITA
+        function initOnlineRadio() {
+            // Criar elemento de áudio para stream real
+            radioAudio = document.createElement('audio');
+            radioAudio.id = 'radioStream';
+            radioAudio.preload = 'none';
+            radioAudio.crossOrigin = 'anonymous';
+            
+            // Adicionar sources com fallbacks
+            RADIO_CONFIG.fallbackStreams.forEach(url => {
+                const source = document.createElement('source');
+                source.src = url;
+                source.type = 'audio/mpeg';
+                radioAudio.appendChild(source);
+            });
+            
+            document.body.appendChild(radioAudio);
+            
+            // Configurar eventos
+            radioAudio.addEventListener('loadstart', () => {
+                console.log('🔄 Conectando à Rádio Semear...');
+                updateStatus('Conectando...');
+            });
+            
+            radioAudio.addEventListener('canplay', () => {
+                console.log('✅ Rádio Semear conectada!');
+                updateStatus('Conectado');
+            });
+            
+            radioAudio.addEventListener('play', () => {
+                console.log('▶️ Tocando ao vivo!');
+                startMetadataUpdates();
+            });
+            
+            radioAudio.addEventListener('error', (e) => {
+                console.error('❌ Erro na rádio:', e);
+                updateStatus('Erro de conexão');
+                tryNextStream();
+            });
+            
+            radioAudio.addEventListener('pause', () => {
+                console.log('⏸️ Rádio pausada');
+                stopMetadataUpdates();
+            });
+            
+            // Configurar volume
+            radioAudio.volume = currentVolume / 100;
+        }
+
+        // STREAM ONLINE REAL - Substituir função togglePlay
+        function togglePlay() {
+            const playBtn = document.querySelector('.play-btn');
+            const playIcon = document.getElementById('playIcon');
+            const playText = document.getElementById('playText');
+            const albumArt = document.getElementById('albumArt');
+            
+            if (!isPlaying) {
+                // TOCAR RÁDIO ONLINE
+                radioAudio.play().then(() => {
+                    playIcon.className = 'fas fa-pause';
+                    playText.textContent = 'PAUSE';
+                    playBtn.classList.add('playing');
+                    albumArt.classList.remove('paused');
+                    isPlaying = true;
+                    
+                    // Atualizar status
+                    updateStatus('Ao Vivo 🔴');
+                    console.log('🎵 Rádio Semear tocando ao vivo!');
+                    
+                }).catch(error => {
+                    console.error('Erro ao reproduzir:', error);
+                    updateStatus('Erro de conexão');
+                    
+                    // Fallback para modo simulação
+                    startSimulationMode();
+                });
+            } else {
+                // PAUSAR
+                radioAudio.pause();
+                playIcon.className = 'fas fa-play';
+                playText.textContent = 'PLAY';
+                playBtn.classList.remove('playing');
+                albumArt.classList.add('paused');
+                isPlaying = false;
+                
+                updateStatus('Pausado');
+                stopMetadataUpdates();
+            }
+        }
+
+        // MODO SIMULAÇÃO (caso stream não funcione)
+        function startSimulationMode() {
+            console.log('🎭 Iniciando modo simulação...');
+            const playBtn = document.querySelector('.play-btn');
+            const playIcon = document.getElementById('playIcon');
+            const playText = document.getElementById('playText');
+            const albumArt = document.getElementById('albumArt');
+            
+            playIcon.className = 'fas fa-pause';
+            playText.textContent = 'PAUSE';
+            playBtn.classList.add('playing');
+            albumArt.classList.remove('paused');
+            isPlaying = true;
+            
+            updateStatus('Simulação 🎭');
+            startSimulatedPlaylist();
+        }
+
+        // CONTROLE DE VOLUME REAL
+        function changeVolume(value) {
+            currentVolume = value;
+            if (radioAudio) {
+                radioAudio.volume = value / 100;
+            }
+            console.log(`🔊 Volume: ${value}%`);
+        }
+
+        // TENTAR PRÓXIMO STREAM
+        let currentStreamIndex = 0;
+        function tryNextStream() {
+            if (currentStreamIndex < RADIO_CONFIG.fallbackStreams.length - 1) {
+                currentStreamIndex++;
+                console.log(`🔄 Tentando stream ${currentStreamIndex + 1}...`);
+                
+                // Limpar sources antigas
+                radioAudio.innerHTML = '';
+                
+                // Adicionar novo source
+                const source = document.createElement('source');
+                source.src = RADIO_CONFIG.fallbackStreams[currentStreamIndex];
+                source.type = 'audio/mpeg';
+                radioAudio.appendChild(source);
+                
+                radioAudio.load();
+            } else {
+                console.log('🎭 Todos os streams falharam, usando simulação');
+                startSimulationMode();
+            }
+        }
+
+        // ATUALIZAR STATUS
+        function updateStatus(status) {
+            const liveIndicator = document.querySelector('.live-indicator');
+            if (status === 'Ao Vivo 🔴') {
+                liveIndicator.innerHTML = '🔴 AO VIVO';
+                liveIndicator.style.background = '#ff4757';
+            } else if (status === 'Conectando...') {
+                liveIndicator.innerHTML = '🔄 CONECTANDO';
+                liveIndicator.style.background = '#ffa500';
+            } else if (status === 'Simulação 🎭') {
+                liveIndicator.innerHTML = '🎭 DEMO';
+                liveIndicator.style.background = '#3742fa';
+            } else if (status === 'Erro de conexão') {
+                liveIndicator.innerHTML = '❌ OFFLINE';
+                liveIndicator.style.background = '#ff3838';
+            }
+        }
+
+        // ATUALIZAR METADADOS (informações da música)
+        let metadataInterval;
+        function startMetadataUpdates() {
+            // Simular mudança de música a cada 3-4 minutos
+            metadataInterval = setInterval(() => {
+                currentSongIndex = (currentSongIndex + 1) % playlist.length;
+                const song = playlist[currentSongIndex];
+                
+                document.getElementById('songTitle').textContent = song.title;
+                document.getElementById('artist').textContent = song.artist;
+                
+                console.log(`🎵 Tocando: ${song.title} - ${song.artist}`);
+                
+                // Animação do disco
+                const albumArt = document.getElementById('albumArt');
+                albumArt.style.animation = 'none';
+                setTimeout(() => {
+                    albumArt.style.animation = 'spin 20s linear infinite';
+                }, 100);
+                
+            }, Math.random() * 60000 + 180000); // Entre 3-4 minutos
+        }
+
+        function stopMetadataUpdates() {
+            if (metadataInterval) {
+                clearInterval(metadataInterval);
+            }
+        }
+
+        // SIMULAÇÃO DE PLAYLIST (fallback)
+        let simulationInterval;
+        function startSimulatedPlaylist() {
+            simulationInterval = setInterval(() => {
+                currentSongIndex = (currentSongIndex + 1) % playlist.length;
+                playSong(currentSongIndex);
+            }, 8000); // Troca a cada 8 segundos para demo
+        }
+            const playlistElement = document.getElementById('playlist');
+            playlistElement.innerHTML = '';
+            
+            playlist.forEach((song, index) => {
+                const item = document.createElement('div');
+                item.className = `playlist-item ${index === currentSongIndex ? 'current' : ''}`;
+                item.onclick = () => playSong(index);
+                
+                item.innerHTML = `
+                    <div class="song-details">
+                        <strong>${song.title}</strong><br>
+                        <small>${song.artist}</small>
+                    </div>
+                    <div class="song-duration">${song.duration}</div>
+                `;
+                
+                playlistElement.appendChild(item);
+            });
+        }
+
+        function playSong(index) {
+            currentSongIndex = index;
+            const song = playlist[currentSongIndex];
+            
+            document.getElementById('songTitle').textContent = song.title;
+            document.getElementById('artist').textContent = song.artist;
+            document.getElementById('duration').textContent = song.duration;
+            
+            // Atualizar playlist visual
+            document.querySelectorAll('.playlist-item').forEach((item, i) => {
+                item.className = `playlist-item ${i === currentSongIndex ? 'current' : ''}`;
+            });
+            
+            // Converter duração para segundos
+            const [min, sec] = song.duration.split(':');
+            duration = parseInt(min) * 60 + parseInt(sec);
+            
+            // Resetar progresso
+            currentTime = 0;
+            updateProgress();
+            
+            // Animação do disco
+            const albumArt = document.getElementById('albumArt');
+            albumArt.style.animation = 'none';
+            setTimeout(() => {
+                albumArt.style.animation = 'spin 20s linear infinite';
+            }, 100);
+        }
+
+        function togglePlay() {
+            const playBtn = document.querySelector('.play-btn');
+            const playIcon = document.getElementById('playIcon');
+            const playText = document.getElementById('playText');
+            const albumArt = document.getElementById('albumArt');
+            
+            if (!isPlaying) {
+                playIcon.className = 'fas fa-pause';
+                playText.textContent = 'PAUSE';
+                playBtn.classList.add('playing');
+                albumArt.classList.remove('paused');
+                isPlaying = true;
+                startProgress();
+            } else {
+                playIcon.className = 'fas fa-play';
+                playText.textContent = 'PLAY';
+                playBtn.classList.remove('playing');
+                albumArt.classList.add('paused');
+                isPlaying = false;
+                stopProgress();
+            }
+        }
+
+        function previousSong() {
+            currentSongIndex = currentSongIndex > 0 ? currentSongIndex - 1 : playlist.length - 1;
+            playSong(currentSongIndex);
+        }
+
+        function nextSong() {
+            currentSongIndex = (currentSongIndex + 1) % playlist.length;
+            playSong(currentSongIndex);
+        }
+
+        function toggleMic() {
+            const micBtn = document.querySelector('.mic-btn');
+            const micIcon = document.getElementById('micIcon');
+            const micText = document.getElementById('micText');
+            const micIndicator = document.getElementById('micIndicator');
+            
+            if (!isMicOn) {
+                // Solicitar permissão do microfone
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    micIcon.className = 'fas fa-microphone-slash';
+                    micText.textContent = 'PARAR';
+                    micBtn.classList.add('recording');
+                    micIndicator.style.display = 'inline';
+                    isMicOn = true;
+                    
+                    // Aqui você integraria com WebRTC ou servidor de streaming
+                    console.log('Microfone ativado - transmissão iniciada');
+                })
+                .catch(err => {
+                    alert('Erro ao acessar o microfone: ' + err.message);
+                });
+            } else {
+                micIcon.className = 'fas fa-microphone';
+                micText.textContent = 'FALAR';
+                micBtn.classList.remove('recording');
+                micIndicator.style.display = 'none';
+                isMicOn = false;
+                
+                console.log('Microfone desativado - transmissão parada');
+            }
+        }
+
+        function changeVolume(value) {
+            currentVolume = value;
+            console.log(`Volume alterado para: ${value}%`);
+        }
+
+        let progressInterval;
+
+        function startProgress() {
+            progressInterval = setInterval(() => {
+                if (currentTime < duration) {
+                    currentTime++;
+                    updateProgress();
+                } else {
+                    nextSong();
+                    if (isPlaying) startProgress();
+                }
+            }, 1000);
+        }
+
+        function stopProgress() {
+            clearInterval(progressInterval);
+        }
+
+        function updateProgress() {
+            const progress = (currentTime / duration) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            const minutes = Math.floor(currentTime / 60);
+            const seconds = currentTime % 60;
+            document.getElementById('currentTime').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Atualizar contador de ouvintes
+        function updateListeners() {
+            const listenersCount = document.getElementById('listeners');
+            const currentCount = parseInt(listenersCount.textContent);
+            const change = Math.floor(Math.random() * 10) - 5;
+            const newCount = Math.max(200, Math.min(500, currentCount + change));
+            listenersCount.textContent = newCount;
+        }
+
+        // Inicializar quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎵 Inicializando Rádio Semear...');
+            
+            // Inicializar rádio online
+            initOnlineRadio();
+            
+            // Inicializar playlist
+            initPlaylist();
+            
+            // Atualizar ouvintes
+            setInterval(updateListeners, 30000);
+            
+            // Mensagem de boas-vindas
+            setTimeout(() => {
+                updateStatus('Pronta para tocar! 🎵');
+                console.log('📻 Rádio Semear pronta! Clique PLAY para ouvir ao vivo!');
+            }, 2000);
+        });
+
+        // SISTEMA DE MICROFONE REAL (WebRTC)
+        let mediaRecorder;
+        let audioChunks = [];
+
+        async function toggleMic() {
+            const micBtn = document.querySelector('.mic-btn');
+            const micIcon = document.getElementById('micIcon');
+            const micText = document.getElementById('micText');
+            const micIndicator = document.getElementById('micIndicator');
+            
+            if (!isMicOn) {
+                try {
+                    // Solicitar acesso ao microfone
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        audio: {
+                            echoCancellation: true,
+                            noiseSuppression: true,
+                            sampleRate: 44100
+                        } 
+                    });
+                    
+                    // Configurar gravação
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+                    
+                    // Iniciar gravação
+                    mediaRecorder.start();
+                    
+                    // Atualizar interface
+                    micIcon.className = 'fas fa-microphone-slash';
+                    micText.textContent = 'PARAR';
+                    micBtn.classList.add('recording');
+                    micIndicator.style.display = 'inline';
+                    isMicOn = true;
+                    
+                    console.log('🎙️ Microfone ativado! Você está no ar!');
+                    
+                    // Pausar música enquanto fala
+                    if (isPlaying && radioAudio) {
+                        radioAudio.volume = 0.3; // Diminuir volume da música
+                    }
+                    
+                } catch (error) {
+                    alert('Erro ao acessar microfone: ' + error.message);
+                    console.error('Erro no microfone:', error);
+                }
+            } else {
+                // Parar gravação
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                }
+                
+                // Parar stream
+                if (mediaRecorder && mediaRecorder.stream) {
+                    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Atualizar interface
+                micIcon.className = 'fas fa-microphone';
+                micText.textContent = 'FALAR';
+                micBtn.classList.remove('recording');
+                micIndicator.style.display = 'none';
+                isMicOn = false;
+                
+                // Restaurar volume da música
+                if (isPlaying && radioAudio) {
+                    radioAudio.volume = currentVolume / 100;
+                }
+                
+                console.log('🎙️ Microfone desativado');
+            }
+        }
+    </script>
+</body>
+</html>
